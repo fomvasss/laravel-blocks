@@ -1,0 +1,43 @@
+{
+    "name": "fomvasss/laravel-blocks",
+    "description": "Universal blocks system for Laravel (static & dynamic content)",
+    "type": "library",
+    "keywords": [
+        "content",
+        "laravel",
+        "blocks",
+        "laravel-blocks"
+    ],
+    "homepage": "https://github.com/fomvasss/laravel-blocks",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "fomvasss",
+            "email": "fomvasss@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/contracts": "^9|^10|^11|^12|^13",
+        "intervention/image": "^3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fomvasss\\Blocks\\": "src"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Fomvasss\\Blocks\\ServiceProvider"
+            ],
+            "aliases": {
+                "Block": "Fomvasss\\Blocks\\Facades\\Block"
+            }
+        }
+    }
+}
