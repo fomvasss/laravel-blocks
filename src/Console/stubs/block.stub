@@ -1,0 +1,19 @@
+<?php
+
+namespace {{ namespace }};
+
+use Fomvasss\Blocks\Contracts\BlockHandlerInterface;
+use Illuminate\Database\Eloquent\Model;
+
+class {{ class }} implements BlockHandlerInterface
+{
+    public static function getType(): string
+    {
+        return '{{ block_type }}';
+    }
+
+    public function handle(Model $block, array $attrs = []): array
+    {
+        // ...
+    }
+}

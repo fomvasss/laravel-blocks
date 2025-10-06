@@ -2,6 +2,7 @@
 
 namespace Fomvasss\Blocks;
 
+use Fomvasss\Blocks\Console\MakeBlockCommand;
 use Symfony\Component\Finder\Finder;
 use Fomvasss\Blocks\BlockService;
 use Fomvasss\Blocks\Contracts\BlockHandlerInterface;
@@ -20,6 +21,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                 __DIR__.'/../database/migrations/create_blocks_table.php.stub' => database_path('migrations/'.date('Y_m_d_His', time()).'_create_blocks_table.php'),
             ], 'laravel-blocks-migrations');
         }
+
+        $this->commands([
+            MakeBlockCommand::class,
+        ]);
 
         $this->registerRoutes();
 
@@ -46,7 +51,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
     /**
      * Register handlers dynamic blocks.
-     * 
+     *
      * @return void
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
@@ -65,12 +70,12 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $blockService = $this->app->make(BlockService::class);
 
         foreach ($paths as $path) {
-            
+
             if (!is_dir($path)) continue;
-        
+
             $finder = new Finder();
             $finder->files()->in($path)->name('*.php');
-          
+
             foreach ($finder as $file) {
                 $relativePath = str_replace([$path . '/', '.php'], '', $file->getRelativePathname());
                 $class = $namespaceMap[$path] . '\\' . str_replace('/', '\\', $relativePath);
