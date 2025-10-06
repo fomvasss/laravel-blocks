@@ -25,7 +25,7 @@ trait HasBlocks
         $res = [];
 
         foreach ($this->blocks as $block) {
-            $blockService = $this->app->make(BlockService::class);
+            $blockService = app()->make(BlockService::class);
             $block = $blockService->init($block->id, 'id')->getBlock();
 
             $res[] = BlockResource::make($block);

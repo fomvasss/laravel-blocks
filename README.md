@@ -24,10 +24,10 @@ php artisan vendor:publish --provider="Fomvasss\Blocks\ServiceProvider"
 php artisan migrate
 ```
 
-Add to filesystems.php disc config (for cache images):
+Add to filesystems.php disk config (for cache images):
 
 ```php
-    'discs' => [
+    'disks' => [
     //...
         'blocks' => [
             'driver' => 'local',

@@ -20,7 +20,7 @@ return [
     
     'images' => [
         'source' => [
-            'disc' => 'public',
+            'disk' => 'public',
             'folders' => [
                 'upload',
                 'images',
@@ -29,12 +29,12 @@ return [
         ],
         
         'cache' => [
-            'disc' => 'blocks', // Add config disc!
+            'disk' => 'blocks', // Add config disk!
             'format' => 'webp',
             'routename' => 'blocks.imagecache',
         ],
 
-//         Add next configuration disc to filesystems.php
+//         Add next configuration disk to filesystems.php
 //        'blocks' => [
 //            'driver' => 'local',
 //            'root' => storage_path('app/public/blocks'),

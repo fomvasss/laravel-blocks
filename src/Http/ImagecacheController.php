@@ -25,11 +25,11 @@ class ImagecacheController extends \Illuminate\Routing\Controller
 
         $cacheFile = md5($imgPath) . '.webp';
 
-        $cachedisc = config('blocks.images.cache.disc');
+        $cachedisk = config('blocks.images.cache.disc');
         
-        if (Storage::disk($cachedisc)->exists($cacheFile)) {
+        if (Storage::disk($cachedisk)->exists($cacheFile)) {
             return response()->file(
-                Storage::disk($cachedisc)->path($cacheFile), [
+                Storage::disk($cachedisk)->path($cacheFile), [
                     'Content-Type' => 'image/webp',
                     'Content-Disposition' => 'inline; filename="' . basename($sourceName) . '.webp"',
                 ]
@@ -42,7 +42,7 @@ class ImagecacheController extends \Illuminate\Routing\Controller
             ->read($path)
             ->encode(new WebpEncoder(quality: 95));
 
-        Storage::disk($cachedisc)->put($cacheFile, $img);
+        Storage::disk($cachedisk)->put($cacheFile, $img);
         
         return response($img, 200, [
             'Content-Type' => 'image/webp',
@@ -64,8 +64,8 @@ class ImagecacheController extends \Illuminate\Routing\Controller
 
         foreach ($folders as $folder) {
             $path = trim($folder . '/' . $filename, '/');
-            if (Storage::disk($source['disc'])->exists($path)) {
-                return Storage::disk($source['disc'])->path($path);
+            if (Storage::disk($source['disk'])->exists($path)) {
+                return Storage::disk($source['disk'])->path($path);
             }
         }
 

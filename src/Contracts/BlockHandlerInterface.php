@@ -2,11 +2,11 @@
 
 namespace Fomvasss\Blocks\Contracts;
 
-use Fomvasss\Blocks\Models\Block;
+use Illuminate\Database\Eloquent\Model;
 
 interface BlockHandlerInterface
 {
     public static function getType(): string;
 
-    public function handle(Block $block, array $attrs = []): array;
+    public function handle(Model $block, array $attrs = []): array;
 }
