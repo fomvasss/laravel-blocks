@@ -74,7 +74,7 @@ Example `app/Blocks/ContactsBlockHandler.php`:
 namespace App\Blocks;
 
 use Fomvasss\Blocks\Contracts\BlockHandlerInterface;
-use Fomvasss\Blocks\Models\Block;
+use Illuminate\Database\Eloquent\Model;
 
 class ContactsBlockHandler implements BlockHandlerInterface
 {
@@ -84,7 +84,7 @@ class ContactsBlockHandler implements BlockHandlerInterface
         return 'contacts';
     }
 
-    public function handle(Block $block, array $attrs = []): array
+    public function handle(Model $block, array $attrs = []): array
     {
         return [
             'email' => config('app.email'),
