@@ -3,7 +3,7 @@
 namespace Fomvasss\Blocks\Handlers;
 
 use Fomvasss\Blocks\Contracts\BlockHandlerInterface;
-use Fomvasss\Blocks\Models\Block;
+use Illuminate\Database\Eloquent\Model;
 
 class SomeBlockHandler implements BlockHandlerInterface
 {
@@ -12,7 +12,7 @@ class SomeBlockHandler implements BlockHandlerInterface
         return 'some';
     }
 
-    public function handle(Block $block, array $attrs = []): array
+    public function handle(Model $block, array $attrs = []): array
     {
         return [
             'phones' => $block->content['phones'] ?? [],

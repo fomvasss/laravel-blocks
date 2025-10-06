@@ -21,13 +21,13 @@ class ImagecacheHandler
             $relativePath = substr($fullPath, $startIndex) . '.webp';
             $cacheFile = md5($relativePath) . '.webp';
 
-            $cachedisc = config('blocks.images.cache.disc');
-            if (Storage::disk($cachedisc)->exists($cacheFile)) {
-                return Storage::disk($cachedisc)->url($cacheFile);
+            $cachedisk = config('blocks.images.cache.disk');
+            if (Storage::disk($cachedisk)->exists($cacheFile)) {
+                return Storage::disk($cachedisk)->url($cacheFile);
             }
 
-            $sourcedisc = config('blocks.images.source.disc');
-            if (Storage::disk($sourcedisc)->exists($path)) {
+            $sourcedisk = config('blocks.images.source.disk');
+            if (Storage::disk($sourcedisk)->exists($path)) {
                 return route(config('blocks.images.cache.routename'), $relativePath);
             }
         }
