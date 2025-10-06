@@ -25,7 +25,7 @@ class ImagecacheController extends \Illuminate\Routing\Controller
 
         $cacheFile = md5($imgPath) . '.webp';
 
-        $cachedisk = config('blocks.images.cache.disc');
+        $cachedisk = config('blocks.images.cache.disk');
         
         if (Storage::disk($cachedisk)->exists($cacheFile)) {
             return response()->file(
