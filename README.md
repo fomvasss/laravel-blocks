@@ -64,7 +64,14 @@ Use facede
  \Block::init('slider')->getDataSort('slides');
 ```
 
-For prepare dinamic block content, place your hendlers in dir `app/Blocks/...`
+For prepare dynamic block content, place your hendlers in dir `app/Blocks/...`
+
+You can quickly generate one using the artisan command:
+
+```bash
+php artisan make:block ContactsBlockHandler
+```
+This will create a new class based on the block.stub template inside app/Blocks.
 
 Example `app/Blocks/ContactsBlockHandler.php`:
 
