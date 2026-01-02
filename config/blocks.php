@@ -29,7 +29,7 @@ return [
         ],
         
         'cache' => [
-            'disk' => 'blocks', // Add config disk!
+                'disk' => 'blocks', // Add config disk!
             'format' => 'webp',
             'routename' => 'blocks.imagecache',
         ],

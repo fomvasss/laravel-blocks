@@ -176,27 +176,28 @@ class BlockService
     }
     
     /**
-     * For resources in sblocks field (PageControlled, GlobController, etc).
-     *
-     * @param $blocksSlug
-     * @param bool $mapSlug
-     * @return array
+     * @param string|array $blocksKeys
+     * @param string|bool $mapKey
+     * @param string $initKey
+     * @param mixed $default
+     * @return array|null
      */
-    public function getBlocksResource($blocksSlug, bool $mapSlug = false)
+    public function getBlocksResource(string|array $blocksKeys, string|bool $mapKey = '', string $initKey = 'slug', $default = []): array|null
     {
         $res = [];
 
-        foreach (Arr::wrap($blocksSlug) as $blockSlug) {
-            if ($block = $this->init($blockSlug)?->getBlock()) {
-                if ($mapSlug) {
-                    $res[$block->slug] = BlockResource::make($block);
+        foreach (Arr::wrap($blocksKeys) as $blockSlug) {
+            if ($block = $this->init($blockSlug, $initKey)?->getBlock()) {
+                if ($mapKey) {
+                    $mapKey = is_string($mapKey) ? $mapKey : 'slug';
+                    $res[$block->{$mapKey}] = BlockResource::make($block);
                 } else {
                     $res[] = BlockResource::make($block);
                 }
             }
         }
 
-        return $res;
+        return $res ?: $default;
     }
 
     /**
