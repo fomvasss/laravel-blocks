@@ -139,11 +139,13 @@ class BlockService
      * TODO: Deprecated
      * 
      * @param array $attrs
-     * @return null
+     * @return $this
      */
     public function setOptions(array $attrs)
     {
-        return $this->setAttrs($attrs);
+        $this->setAttrs($attrs);
+
+        return $this;
     }
 
     /**
