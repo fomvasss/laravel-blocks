@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fomvasss\Blocks\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -7,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class Block extends Model
 {
@@ -39,7 +42,7 @@ class Block extends Model
 
     public static function getCacheName(string $key): string
     {
-        return md5(serialize("blocks-{$key}"));
+        return md5("blocks-{$key}");
     }
 
     /**
@@ -99,7 +102,7 @@ class Block extends Model
      */
     public static function getBlockableModels(): array
     {
-        return \DB::table('blockable')->pluck('model_type', 'model_type')
+        return DB::table('blockable')->pluck('model_type', 'model_type')
             ->unique()
             ->mapWithKeys(fn($type) => [$type => ucfirst($type)])
             ->toArray();

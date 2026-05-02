@@ -8,11 +8,10 @@ use Fomvasss\Blocks\Http\BlockResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 class BlockService
 {
-    protected Model $block;
+    protected ?Model $block = null;
 
     protected array $attrs = [];
 
@@ -43,26 +42,30 @@ class BlockService
      */
     public function init(string $key, string $keyField = 'slug', array $attrs = [])
     {
+        // Скидаємо стан між викликами (singleton-безпека)
+        $this->block = null;
+        $this->attrs = [];
+
         $modelClass = config('blocks.model.class');
-        
+
         if ($block = Cache::get($modelClass::getCacheName($key))) {
             $this->block = $block;
 
             return $this;
         }
-        
+
         if ($block = $modelClass::with(config('blocks.model.with_loaded') ?: [])->where($keyField, $key)->first()) {
-            
+
             if ($attrs) {
                 $this->setAttrs($attrs);
             }
-            
+
             $block->content = $this->prepareStaticContent($block, $block->content ?? []);
 
             $block->data = \array_merge($block->content ?: [], $this->prepareDynamicContent($block));
 
             if ($time = $block->getOptions('cache')) { // minutes
-                Cache::remember($modelClass::getCacheName($key), $time * 60, fn () => $block);
+                Cache::put($modelClass::getCacheName($key), $block, $time * 60);
             }
 
             $this->block = $block;
@@ -183,11 +186,13 @@ class BlockService
     {
         $res = [];
 
+        // Нормалізуємо mapKey один раз поза циклом
+        $resolvedMapKey = is_string($mapKey) && $mapKey !== '' ? $mapKey : ($mapKey ? 'slug' : '');
+
         foreach (Arr::wrap($blocksKeys) as $blockSlug) {
             if ($block = $this->init($blockSlug, $initKey)?->getBlock()) {
-                if ($mapKey) {
-                    $mapKey = is_string($mapKey) ? $mapKey : 'slug';
-                    $res[$block->{$mapKey}] = BlockResource::make($block);
+                if ($resolvedMapKey) {
+                    $res[$block->{$resolvedMapKey}] = BlockResource::make($block);
                 } else {
                     $res[] = BlockResource::make($block);
                 }

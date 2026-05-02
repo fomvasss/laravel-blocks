@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fomvasss\Blocks\Models;
 
 use Fomvasss\Blocks\BlockService;
 use Fomvasss\Blocks\Http\BlockResource;
-use Fomvasss\Models\Block;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait HasBlocks
@@ -14,7 +15,7 @@ trait HasBlocks
     public function blocks(): MorphToMany
     {
         $modelClass = config('blocks.model.class');
-        
+
         return $this->morphToMany($modelClass, 'model', 'blockable')
             ->withPivot('id')
             ->orderByPivot('weight');
@@ -26,10 +27,12 @@ trait HasBlocks
 
         foreach ($this->blocks as $block) {
             $blockService = app()->make(BlockService::class);
-            $block = $blockService->init($block->id, 'id')->getBlock();
 
-            $res[] = BlockResource::make($block);
+            if ($initialized = $blockService->init($block->id, 'id')) {
+                $res[] = BlockResource::make($initialized->getBlock());
+            }
         }
+
         return $res;
     }
 }

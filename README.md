@@ -1,76 +1,62 @@
-
-# Laravel Blocks package
+# Laravel Blocks
 
 [![License](https://img.shields.io/packagist/l/fomvasss/laravel-blocks.svg?style=for-the-badge)](https://packagist.org/packages/fomvasss/laravel-blocks)
-[![Build Status](https://img.shields.io/github/stars/fomvasss/laravel-blocks.svg?style=for-the-badge)](https://github.com/fomvasss/laravel-blocks)
 [![Latest Stable Version](https://img.shields.io/packagist/v/fomvasss/laravel-blocks.svg?style=for-the-badge)](https://packagist.org/packages/fomvasss/laravel-blocks)
 [![Total Downloads](https://img.shields.io/packagist/dt/fomvasss/laravel-blocks.svg?style=for-the-badge)](https://packagist.org/packages/fomvasss/laravel-blocks)
-[![Quality Score](https://img.shields.io/scrutinizer/g/fomvasss/laravel-blocks.svg?style=for-the-badge)](https://scrutinizer-ci.com/g/fomvasss/laravel-blocks)
 
-Universal blocks system for Laravel (static & dynamic content).
+Universal content-blocks system for Laravel — static (JSON) and dynamic (handler-driven).
+
+> Ukrainian: [README.uk.md](README.uk.md)
+
+---
 
 ## Requirements
 
-- PHP ^8.1
-- Laravel ^10 / ^11 / ^12 / ^13
+- PHP ^8.1 · Laravel ^10 / ^11 / ^12 / ^13
 
 ## Installation
 
 ```bash
 composer require fomvasss/laravel-blocks
-```
-
-Publish the config and run migrations:
-
-```bash
 php artisan vendor:publish --provider="Fomvasss\Blocks\ServiceProvider"
 php artisan migrate
 ```
 
-## Usage
+---
 
-### Facade
+## Facade
 
 ```php
+// Get prepared block model
 \Block::init('contacts')->getBlock();
 
+// Read a value from merged data
 \Block::init('contacts')->getData('phone');
 
+// Read nested value (dot-notation)
+\Block::init('hero')->getData('slides.0.title');
+
+// Read sorted array (by item weight)
 \Block::init('slider')->getDataSort('slides');
 
-\Block::getBlockResource('slider-2');
+// Pass runtime attrs to the dynamic handler
+\Block::setAttrs(['limit' => 5])->init('news')->getData('items');
 
-\Block::getBlocksResource(['slider-1']);
-
-\Block::setAttrs(['sort' => 'desc'])->init('some-1', 'slug')->getBlock();
+// JSON resources
+\Block::getBlockResource('hero');
+\Block::getBlocksResource(['hero', 'contacts']);          // indexed
+\Block::getBlocksResource(['hero', 'contacts'], 'slug');  // keyed by slug
 ```
 
-### HasBlocks Trait
+---
 
-The Eloquent model that owns blocks must use the `HasBlocks` trait:
+## Dynamic Block Handlers
 
-```php
-namespace App\Models;
-
-use Fomvasss\Blocks\Models\HasBlocks;
-
-class PageModel extends Model
-{
-    use HasBlocks;
-}
-```
-
-### Dynamic Block Handlers
-
-Place your handlers in `app/Blocks/`. Each handler must implement `BlockHandlerInterface`.
-
-Generate a handler with artisan:
+Create a handler class in `app/Blocks/` — it is auto-discovered on boot.
 
 ```bash
 php artisan make:block ContactsBlockHandler
 ```
-
-Example `app/Blocks/ContactsBlockHandler.php`:
 
 ```php
 <?php
@@ -82,72 +68,77 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContactsBlockHandler implements BlockHandlerInterface
 {
-    public static function getType(): string
+    public static function getTypes(): array
     {
-        return 'contacts';
+        return ['contacts']; // matches block->type in DB
     }
 
     public function handle(Model $block, array $attrs = []): array
     {
         return [
-            'email'   => config('app.email'),
+            'email'   => config('app.contact_email'),
             'address' => $block->getContent('address', ''),
-            'phone'   => preg_replace('/[^0-9]/si', '', $block->getContent('phone', '')),
+            'phone'   => preg_replace('/[^0-9+]/si', '', $block->getContent('phone', '')),
         ] + $attrs;
     }
 }
 ```
 
+---
+
+## HasBlocks Trait
+
+Attach blocks to any Eloquent model via a polymorphic pivot:
+
+```php
+use Fomvasss\Blocks\Models\HasBlocks;
+
+class Page extends Model
+{
+    use HasBlocks;
+}
+```
+
+```php
+// Relation
+$page->blocks;
+
+// Array of BlockResource objects
+$page->getResourceBlocks();
+```
+
+---
+
 ## Field Handlers (optional)
 
-Field handlers are applied to **every string value** in block content before it is returned.
-They are useful for transforming stored values (e.g., image URLs) on-the-fly.
+Applied to every string value in block `content` before it is returned (e.g. image URL transformation).
 
-Register them in `config/blocks.php`:
-
-```php
-'fieldhandlers' => [
-    \Fomvasss\Blocks\Handlers\ImagepresetHandler::class,
-],
-```
-
-### ImagepresetHandler
-
-An optional built-in handler that transforms image URLs using the
-[fomvasss/laravel-imagepresets](https://github.com/fomvasss/laravel-imagepresets) package
-(on-the-fly resize/convert via League Glide).
-
-**Setup:**
-
-1. Install the dependency:
-
-```bash
-composer require fomvasss/laravel-imagepresets
-```
-
-2. Publish its config and configure presets in `config/imagepresets.php`:
-
-```bash
-php artisan vendor:publish --provider="Fomvasss\Imagepresets\ImagepresetServiceProvider"
-```
-
-3. Enable `ImagepresetHandler` in `config/blocks.php`:
+Enable in `config/blocks.php`:
 
 ```php
 'fieldhandlers' => [
-    \Fomvasss\Blocks\Handlers\ImagepresetHandler::class,
+    \Fomvasss\Blocks\Handlers\ImagepresetHandler::class, // requires fomvasss/laravel-imagepresets
 ],
-
 ```
+
+---
+
+## Caching
+
+Set `cache` (minutes) in a block's `options` JSON to cache the prepared block:
+
+```json
+{ "cache": 60 }
+```
+
+Cache is cleared automatically on model save.
+
+---
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Credits
-
-- [fomvasss](https://github.com/fomvasss)
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+MIT — see [LICENSE.md](LICENSE.md).
