@@ -2,46 +2,34 @@
 
 return [
     /* -----------------------------------------------------------------
-     |  The default Model meta-tag
+     |  The default Model
      | -----------------------------------------------------------------
      */
     'model' => [
         'class' => \Fomvasss\Blocks\Models\Block::class,
-        
+
         'with_loaded' => [
             //'translations',
             //'models'
         ],
     ],
 
+    /*
+     | -----------------------------------------------------------------
+     |  Field Handlers
+     | -----------------------------------------------------------------
+     |
+     | Handlers are applied to every string field value of a block's content.
+     | Each handler must implement a handle(Model $block, string $url): string method.
+     |
+     | To enable image URL transformation via fomvasss/laravel-imagepresets:
+     |   1. composer require fomvasss/laravel-imagepresets
+     |   2. Uncomment the line below.
+     |   3. To change the preset — extend ImagepresetHandler and override $preset.
+     |
+     */
     'fieldhandlers' => [
-        \Fomvasss\Blocks\Handlers\ImagecacheHandler::class,
+        \Fomvasss\Blocks\Handlers\ImagepresetHandler::class,
     ],
-    
-    'images' => [
-        'source' => [
-            'disk' => 'public',
-            'folders' => [
-                'upload',
-                'images',
-                'photos/shares',
-            ],
-        ],
-        
-        'cache' => [
-                'disk' => 'blocks', // Add config disk!
-            'format' => 'webp',
-            'routename' => 'blocks.imagecache',
-        ],
 
-//         Add next configuration disk to filesystems.php
-//        'blocks' => [
-//            'driver' => 'local',
-//            'root' => storage_path('app/public/blocks'),
-//            'url' => env('APP_URL').'/storage/blocks',
-//            'visibility' => 'public',
-//        ],
-        
-        'extensions' => '/\.(jpeg|jpg|png|gif)$/',
-    ]
 ];

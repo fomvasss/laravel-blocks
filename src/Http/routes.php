@@ -1,7 +1,4 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-Route::get('/blocks-imagecache/{path}', [\Fomvasss\Blocks\Http\ImagecacheController::class, 'imagecache'])
-    ->where('path', '.*')
-    ->name('imagecache');
+// No routes registered in v2.0
+// Image caching/conversion is no longer part of this package.

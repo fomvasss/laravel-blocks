@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fomvasss\Blocks;
 
 use Fomvasss\Blocks\Console\MakeBlockCommand;
 use Symfony\Component\Finder\Finder;
 use Fomvasss\Blocks\BlockService;
 use Fomvasss\Blocks\Contracts\BlockHandlerInterface;
-use Illuminate\Support\Facades\Route;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__.'/../config/blocks.php' => config_path('blocks.php'),
@@ -26,27 +27,16 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             MakeBlockCommand::class,
         ]);
 
-        $this->registerRoutes();
-
         $this->autoRegisterHandlers();
     }
 
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/blocks.php', 'blocks');
 
         $this->app->singleton(BlockService::class, function () {
             return new BlockService();
         });
-    }
-
-    protected function registerRoutes()
-    {
-        Route::namespace('Fomvasss\Blocks\Http\Controllers')
-            ->as('blocks.')
-            ->group(function () {
-                $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
-            });
     }
 
     /**

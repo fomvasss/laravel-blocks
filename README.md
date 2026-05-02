@@ -9,69 +9,62 @@
 
 Universal blocks system for Laravel (static & dynamic content).
 
-## Installation
+## Requirements
 
-Install the package via composer:
+- PHP ^8.1
+- Laravel ^10 / ^11 / ^12 / ^13
+
+## Installation
 
 ```bash
 composer require fomvasss/laravel-blocks
 ```
 
-Publish and run the migrations with:
+Publish the config and run migrations:
 
 ```bash
 php artisan vendor:publish --provider="Fomvasss\Blocks\ServiceProvider"
 php artisan migrate
 ```
 
-Add to filesystems.php disk config (for cache images):
-
-```php
-    'disks' => [
-    //...
-        'blocks' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public/blocks'),
-            'url' => env('APP_URL').'/storage/blocks',
-            'visibility' => 'public',
-        ],
-    ],
-```
-
 ## Usage
 
-The Eloquent model for relations must has the Trait `HasBlocks`:
+### Facade
+
+```php
+\Block::init('contacts')->getBlock();
+
+\Block::init('contacts')->getData('phone');
+
+\Block::init('slider')->getDataSort('slides');
+
+\Block::setAttrs(['sort' => 'desc'])->init('some-1', 'slug')->getBlock();
+```
+
+### HasBlocks Trait
+
+The Eloquent model that owns blocks must use the `HasBlocks` trait:
 
 ```php
 namespace App\Models;
 
 use Fomvasss\Blocks\Models\HasBlocks;
 
-class PageModel extends Model {
-
-	use HasBlocks;
-	//...
+class PageModel extends Model
+{
+    use HasBlocks;
 }
 ```
 
-Use facede
+### Dynamic Block Handlers
 
-```php
- \Block::setAttrs(['sort' => 'desc'])->init('some-1', 'slug')->getBlock();
- 
- \Block::init('contacts')->getData('phone');
- 
- \Block::init('slider')->getDataSort('slides');
-```
+Place your handlers in `app/Blocks/`. Each handler must implement `BlockHandlerInterface`.
 
-For prepare dynamic block content, place your hendlers in dir `app/Blocks/...`
-
-You can quickly generate one using the artisan command:
+Generate a handler with artisan:
 
 ```bash
 php artisan make:block ContactsBlockHandler
 ```
-This will create a new class based on the block.stub template inside app/Blocks.
 
 Example `app/Blocks/ContactsBlockHandler.php`:
 
@@ -85,7 +78,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContactsBlockHandler implements BlockHandlerInterface
 {
-
     public static function getType(): string
     {
         return 'contacts';
@@ -94,14 +86,55 @@ class ContactsBlockHandler implements BlockHandlerInterface
     public function handle(Model $block, array $attrs = []): array
     {
         return [
-            'email' => config('app.email'),
+            'email'   => config('app.email'),
             'address' => $block->getContent('address', ''),
-            'phone' => preg_replace('/[^0-9]/si', '', $block->getContent('phone', '')),
+            'phone'   => preg_replace('/[^0-9]/si', '', $block->getContent('phone', '')),
         ] + $attrs;
     }
 }
 ```
 
+## Field Handlers (optional)
+
+Field handlers are applied to **every string value** in block content before it is returned.
+They are useful for transforming stored values (e.g., image URLs) on-the-fly.
+
+Register them in `config/blocks.php`:
+
+```php
+'fieldhandlers' => [
+    \Fomvasss\Blocks\Handlers\ImagepresetHandler::class,
+],
+```
+
+### ImagepresetHandler
+
+An optional built-in handler that transforms image URLs using the
+[fomvasss/laravel-imagepresets](https://github.com/fomvasss/laravel-imagepresets) package
+(on-the-fly resize/convert via League Glide).
+
+**Setup:**
+
+1. Install the dependency:
+
+```bash
+composer require fomvasss/laravel-imagepresets
+```
+
+2. Publish its config and configure presets in `config/imagepresets.php`:
+
+```bash
+php artisan vendor:publish --provider="Fomvasss\Imagepresets\ImagepresetServiceProvider"
+```
+
+3. Enable `ImagepresetHandler` in `config/blocks.php`:
+
+```php
+'fieldhandlers' => [
+    \Fomvasss\Blocks\Handlers\ImagepresetHandler::class,
+],
+
+```
 
 ## Changelog
 
