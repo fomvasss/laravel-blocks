@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 interface BlockHandlerInterface
 {
-    public static function getType(): string;
+    /**
+     * Повертає масив типів блоків, які обробляє цей handler.
+     *
+     * @return string[]
+     */
+    public static function getTypes(): array;
 
     public function handle(Model $block, array $attrs = []): array;
 }

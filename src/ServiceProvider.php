@@ -71,7 +71,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                 $class = $namespaceMap[$path] . '\\' . str_replace('/', '\\', $relativePath);
 
                 if (class_exists($class) && in_array(BlockHandlerInterface::class, class_implements($class))) {
-                    $blockService->register($class::getType(), $class);
+                    foreach ($class::getTypes() as $type) {
+                        $blockService->register($type, $class);
+                    }
                 }
             }
         }

@@ -25,6 +25,12 @@ class BlockService
      */
     public function register(string $type, string $class): void
     {
+        if (isset($this->handlers[$type]) && $this->handlers[$type] !== $class) {
+            throw new \LogicException(
+                "Handler для типу \"{$type}\" вже зареєстровано: {$this->handlers[$type]}. Конфлікт з: {$class}"
+            );
+        }
+
         $this->handlers[$type] = $class;
     }
 
@@ -136,20 +142,7 @@ class BlockService
 
         return  $default;
     }
-
-    /**
-     * TODO: Deprecated
-     * 
-     * @param array $attrs
-     * @return $this
-     */
-    public function setOptions(array $attrs)
-    {
-        $this->setAttrs($attrs);
-
-        return $this;
-    }
-
+    
     /**
      * Tmp dynamic settings.
      *

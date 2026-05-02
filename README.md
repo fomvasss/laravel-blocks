@@ -38,6 +38,10 @@ php artisan migrate
 
 \Block::init('slider')->getDataSort('slides');
 
+\Block::getBlockResource('slider-2');
+
+\Block::getBlocksResource(['slider-1']);
+
 \Block::setAttrs(['sort' => 'desc'])->init('some-1', 'slug')->getBlock();
 ```
 
