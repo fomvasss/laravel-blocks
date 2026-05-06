@@ -42,9 +42,8 @@ class BlockService
      */
     public function init(string|int $key, string $keyField = 'slug', array $attrs = [])
     {
-        // Скидаємо стан між викликами (singleton-безпека)
+        // Reset block state between calls (singleton safety)
         $this->block = null;
-        $this->attrs = [];
 
         $modelClass = config('blocks.model.class');
 
