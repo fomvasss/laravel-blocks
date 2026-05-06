@@ -36,11 +36,11 @@ class BlockService
     /**
      * Initialise block.
      *
-     * @param string $key
+     * @param string|int $key
      * @param string $keyField
      * @return $this|null
      */
-    public function init(string $key, string $keyField = 'slug', array $attrs = [])
+    public function init(string|int $key, string $keyField = 'slug', array $attrs = [])
     {
         // Скидаємо стан між викликами (singleton-безпека)
         $this->block = null;
