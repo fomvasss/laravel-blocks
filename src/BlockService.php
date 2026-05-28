@@ -195,9 +195,9 @@ class BlockService
      * @param string|bool $mapKey
      * @param string $initKey
      * @param mixed $default
-     * @return array
+     * @return array|null
      */
-    public function getBlocksResource(string|array $blocksKeys, string|bool $mapKey = '', string $initKey = 'slug', $default = []): array
+    public function getBlocksResource(string|array $blocksKeys, string|bool $mapKey = '', string $initKey = 'slug', $default = []): array|null
     {
         $res = [];
 
