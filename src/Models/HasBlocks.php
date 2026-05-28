@@ -21,16 +21,11 @@ trait HasBlocks
 
     public function getResourceBlocks(): array
     {
-        $res = [];
-        
-        foreach ($this->blocks as $block) {
-            $blockService = app()->make(BlockService::class);
+        $blockService = app()->make(BlockService::class);
 
-            if ($initialized = $blockService->init($block->id, 'id')) {
-                $res[] = BlockResource::make($initialized->getBlock());
-            }
-        }
-
-        return $res;
+        return $this->blocks
+            ->map(fn($block) => BlockResource::make($blockService->initFromModel($block)->getBlock()))
+            ->values()
+            ->all();
     }
 }

@@ -77,6 +77,21 @@ class BlockService
     }
 
     /**
+     * Initialise block from already loaded model (no DB query).
+     */
+    public function initFromModel(Model $block): static
+    {
+        $this->block = null;
+
+        $block->content = $this->prepareStaticContent($block, $block->content ?? []);
+        $block->data = array_merge($block->content ?: [], $this->prepareDynamicContent($block));
+
+        $this->block = $block;
+
+        return $this;
+    }
+
+    /**
      * Get model initialize block.
      */
     public function getBlock(): Model
