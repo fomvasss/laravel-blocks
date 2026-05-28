@@ -16,7 +16,7 @@ class BlockResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => "*** {$this->name} ***", // for dashboard!
+            'name' => $this->name,
             'slug' => $this->slug,
             'type' => $this->type,
             'data' => $this->data ?: $this->content ?: null,

@@ -102,9 +102,6 @@ class Block extends Model
      */
     public static function getBlockableModels(): array
     {
-        return DB::table('blockable')->pluck('model_type', 'model_type')
-            ->unique()
-            ->mapWithKeys(fn($type) => [$type => ucfirst($type)])
-            ->toArray();
+        return DB::table('blockable')->pluck('model_type', 'model_type')->toArray();
     }
 }

@@ -44,6 +44,7 @@ class BlockService
     {
         // Reset block state between calls (singleton safety)
         $this->block = null;
+        //$this->attrs = null; // not use, check!
 
         $modelClass = config('blocks.model.class');
 
@@ -179,9 +180,9 @@ class BlockService
      * @param string|bool $mapKey
      * @param string $initKey
      * @param mixed $default
-     * @return array|null
+     * @return array
      */
-    public function getBlocksResource(string|array $blocksKeys, string|bool $mapKey = '', string $initKey = 'slug', $default = []): array|null
+    public function getBlocksResource(string|array $blocksKeys, string|bool $mapKey = '', string $initKey = 'slug', $default = []): array
     {
         $res = [];
 

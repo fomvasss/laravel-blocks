@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class {{ class }} implements BlockHandlerInterface
 {
-    public static function getType(): string
+    public static function getTypes(): array
     {
-        return '{{ block_type }}';
+        return ['{{ block_type }}'];
     }
 
     public function handle(Model $block, array $attrs = []): array

@@ -17,7 +17,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/../config/blocks.php' => config_path('blocks.php'),
         ]);
 
-        if (! class_exists('CreateBlocksTable')) {
+        if (! glob(database_path('migrations/*_create_blocks_table.php'))) {
             $this->publishes([
                 __DIR__.'/../database/migrations/create_blocks_table.php.stub' => database_path('migrations/'.date('Y_m_d_His', time()).'_create_blocks_table.php'),
             ], 'laravel-blocks-migrations');

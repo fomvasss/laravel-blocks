@@ -2,14 +2,11 @@
 
 namespace Fomvasss\Blocks\Console;
 
-use Illuminate\Console\Concerns\CreatesMatchingTest;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 
 class MakeBlockCommand extends GeneratorCommand
 {
-    use CreatesMatchingTest;
-
     protected $name = 'make:block';
 
     protected $description = 'Create a new Block';
