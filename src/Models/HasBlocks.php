@@ -22,8 +22,7 @@ trait HasBlocks
     public function getResourceBlocks(): array
     {
         $res = [];
-
-        // TODO: https://i.ibb.co/KjBSTqFd/2026-05-08-09-35.jpg
+        
         foreach ($this->blocks as $block) {
             $blockService = app()->make(BlockService::class);
 
