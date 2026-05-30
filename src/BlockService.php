@@ -167,10 +167,17 @@ class BlockService
      * @param array $attrs
      * @return void
      */
-    public function setAttrs(array $attrs)
+    public function setAttrs(array $attrs): static
     {
         $this->attrs = array_merge($this->attrs, $attrs);
-        
+
+        return $this;
+    }
+
+    public function replaceAttrs(array $attrs): static
+    {
+        $this->attrs = $attrs;
+
         return $this;
     }
     
