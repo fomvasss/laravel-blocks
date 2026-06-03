@@ -38,17 +38,22 @@ class BlockService
      *
      * @param string|int $key
      * @param string $keyField
-     * @return $this|null
+     * @return static
      */
-    public function init(string|int $key, string $keyField = 'slug', array $attrs = [])
+    public function init(string|int $key, string $keyField = 'slug', array $attrs = []): static
     {
-        // Reset block state between calls (singleton safety)
+        // Reset block state between calls (singleton safety).
+        // $attrs is intentionally NOT reset — it is a global runtime config
+        // set once via setAttrs()/replaceAttrs() and shared across all init() calls.
+        // Use replaceAttrs([]) to clear manually if needed.
         $this->block = null;
-        //$this->attrs = null; // not use, check!
 
         $modelClass = config('blocks.model.class');
 
         if ($block = Cache::get($modelClass::getCacheName($key))) {
+            // Static content is already prepared in cache; re-run dynamic handler
+            // so current $this->attrs are applied (attrs are not part of the cache key).
+            $block->data = array_merge($block->content ?: [], $this->prepareDynamicContent($block));
             $this->block = $block;
 
             return $this;
@@ -73,7 +78,7 @@ class BlockService
             return $this;
         }
 
-        return null;
+        return $this;
     }
 
     /**
@@ -94,7 +99,7 @@ class BlockService
     /**
      * Get model initialize block.
      */
-    public function getBlock(): Model
+    public function getBlock(): ?Model
     {
         return $this->block;
     }
@@ -212,7 +217,7 @@ class BlockService
         $resolvedMapKey = is_string($mapKey) && $mapKey !== '' ? $mapKey : ($mapKey ? 'slug' : '');
 
         foreach (Arr::wrap($blocksKeys) as $blockSlug) {
-            if ($block = $this->init($blockSlug, $initKey)?->getBlock()) {
+            if ($block = $this->init($blockSlug, $initKey)->getBlock()) {
                 if ($resolvedMapKey) {
                     $res[$block->{$resolvedMapKey}] = BlockResource::make($block);
                 } else {
@@ -228,10 +233,10 @@ class BlockService
      * @param string $blockSlug
      * @return BlockResource|null
      */
-    public function getBlockResource(string $blockSlug)
+    public function getBlockResource(string $blockSlug): ?BlockResource
     {
-        if ($block = $this->init($blockSlug)) {
-            return BlockResource::make($block->getBlock());
+        if ($block = $this->init($blockSlug)->getBlock()) {
+            return BlockResource::make($block);
         }
 
         return null;

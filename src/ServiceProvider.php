@@ -6,7 +6,6 @@ namespace Fomvasss\Blocks;
 
 use Fomvasss\Blocks\Console\MakeBlockCommand;
 use Symfony\Component\Finder\Finder;
-use Fomvasss\Blocks\BlockService;
 use Fomvasss\Blocks\Contracts\BlockHandlerInterface;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider

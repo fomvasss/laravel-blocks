@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.6.1] — 2026-06-03
+
+### Fixed
+
+- `BlockService::init()` now always returns `static` instead of `null` when block is not found — safe chaining without `?->`.
+- `getBlock()` return type corrected to `?Model`.
+- Dynamic handler re-runs on cache hit so current `$this->attrs` are always applied (previously cached `data` was returned regardless of attrs).
+- `Block::getBlockableModels()` uses `distinct()` at SQL level instead of PHP-side deduplication via `pluck(key, key)`.
+
+### Changed
+
+- `declare(strict_types=1)` added to `MakeBlockCommand`, `Block` facade, `BlockResource`.
+- `Block::booted()` return type annotated as `void`.
+- Removed redundant `use Fomvasss\Blocks\BlockService` in `ServiceProvider` (same namespace).
+- Added inline comment explaining why `$attrs` is intentionally not reset between `init()` calls.
+
 ## [2.0.0] — 2026-05-02
 
 ### Breaking Changes

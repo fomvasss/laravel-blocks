@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fomvasss\Blocks\Facades;
 
 class Block extends \Illuminate\Support\Facades\Facade

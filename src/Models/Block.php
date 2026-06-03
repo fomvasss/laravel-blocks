@@ -28,7 +28,7 @@ class Block extends Model
         'weight' => 1000,
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
         static::addGlobalScope('sort', function (Builder $builder) {
             $builder->orderBy('weight')->oldest();
@@ -102,6 +102,6 @@ class Block extends Model
      */
     public static function getBlockableModels(): array
     {
-        return DB::table('blockable')->pluck('model_type', 'model_type')->toArray();
+        return DB::table('blockable')->distinct()->pluck('model_type')->toArray();
     }
 }

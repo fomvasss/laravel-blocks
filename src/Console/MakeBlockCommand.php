@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fomvasss\Blocks\Console;
 
 use Illuminate\Console\GeneratorCommand;

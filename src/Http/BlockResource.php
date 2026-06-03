@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fomvasss\Blocks\Http;
 
 use Illuminate\Http\Resources\Json\JsonResource;
