@@ -48,6 +48,21 @@ php artisan migrate
 \Block::getBlocksResource(['hero', 'contacts'], 'slug');  // з ключами за slug
 ```
 
+`init()` завжди повертає екземпляр сервісу — якщо блок не знайдений, `getData()` / `getContent()` тощо повертають `$default` без помилки.
+
+---
+
+## Runtime Attrs
+
+`setAttrs()` встановлює глобальний runtime-конфіг, який зберігається між усіма наступними викликами `init()` в межах одного запиту. Для скидання використовуйте `replaceAttrs([])`:
+
+```php
+\Block::setAttrs(['limit' => 5])->init('news')->getData('items');
+\Block::init('contacts')->getData('phone'); // attrs ['limit' => 5] ще активні
+
+\Block::replaceAttrs([])->init('contacts')->getData('phone'); // attrs скинуто
+```
+
 ---
 
 ## Динамічні обробники
@@ -131,7 +146,9 @@ $page->getResourceBlocks();
 { "cache": 60 }
 ```
 
-Кеш очищається автоматично при збереженні моделі.
+Кеш очищається автоматично при збереженні та видаленні моделі.
+
+> **Оновлення з < 2.6.3:** формат ключів кешу змінено з `md5("blocks-{key}")` на `"blocks.{key}"`. Після деплою виконайте `php artisan cache:clear` для видалення застарілих записів.
 
 ---
 

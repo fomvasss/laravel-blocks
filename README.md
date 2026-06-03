@@ -48,6 +48,21 @@ php artisan migrate
 \Block::getBlocksResource(['hero', 'contacts'], 'slug');  // keyed by slug
 ```
 
+`init()` always returns the service instance — if the block is not found, `getData()` / `getContent()` etc. return their `$default` value instead of throwing an error.
+
+---
+
+## Runtime Attrs
+
+`setAttrs()` sets global runtime config shared across all subsequent `init()` calls within the same request. To clear attrs, use `replaceAttrs([])`:
+
+```php
+\Block::setAttrs(['limit' => 5])->init('news')->getData('items');
+\Block::init('contacts')->getData('phone'); // attrs ['limit' => 5] still active
+
+\Block::replaceAttrs([])->init('contacts')->getData('phone'); // attrs cleared
+```
+
 ---
 
 ## Dynamic Block Handlers
@@ -131,7 +146,9 @@ Set `cache` (minutes) in a block's `options` JSON to cache the prepared block:
 { "cache": 60 }
 ```
 
-Cache is cleared automatically on model save.
+Cache is cleared automatically on model save and delete.
+
+> **Upgrading from < 2.6.3:** cache key format changed from `md5("blocks-{key}")` to `"blocks.{key}"`. Run `php artisan cache:clear` after deploy to remove stale entries.
 
 ---
 
