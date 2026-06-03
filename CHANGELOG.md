@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.6.2] — 2026-06-03
+
+### Fixed
+
+- Cache is now invalidated on block deletion (`static::deleted`). Previously a deleted block remained in cache until TTL expired.
+
 ## [2.6.1] — 2026-06-03
 
 ### Fixed
