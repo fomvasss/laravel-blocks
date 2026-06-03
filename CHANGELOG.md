@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.6.5] — 2026-06-03
+
+### Fixed
+
+- `getBlocksResource()`: eliminated N+1 queries — uncached blocks are now loaded in a single `whereIn` query instead of one query per key.
+
 ## [2.6.4] — 2026-06-03
 
 ### Fixed

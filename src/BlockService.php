@@ -211,18 +211,45 @@ class BlockService
      */
     public function getBlocksResource(string|array $blocksKeys, string|bool $mapKey = '', string $initKey = 'slug', $default = []): array|null
     {
-        $res = [];
-
-        // Нормалізуємо mapKey один раз поза циклом
+        $keys = Arr::wrap($blocksKeys);
         $resolvedMapKey = is_string($mapKey) && $mapKey !== '' ? $mapKey : ($mapKey ? 'slug' : '');
+        $modelClass = config('blocks.model.class');
 
-        foreach (Arr::wrap($blocksKeys) as $blockSlug) {
-            if ($block = $this->init($blockSlug, $initKey)->getBlock()) {
-                if ($resolvedMapKey) {
-                    $res[$block->{$resolvedMapKey}] = BlockResource::make($block);
-                } else {
-                    $res[] = BlockResource::make($block);
+        $blocks = [];
+        $missing = [];
+
+        foreach ($keys as $key) {
+            if ($cached = Cache::get($modelClass::getCacheName($key))) {
+                $cached->data = array_merge($cached->content ?: [], $this->prepareDynamicContent($cached));
+                $blocks[$key] = $cached;
+            } else {
+                $missing[] = $key;
+            }
+        }
+
+        if ($missing) {
+            $loaded = $modelClass::with(config('blocks.model.with_loaded') ?: [])
+                ->whereIn($initKey, $missing)
+                ->get();
+
+            foreach ($loaded as $block) {
+                $block->content = $this->prepareStaticContent($block, $block->content ?? []);
+                $block->data = array_merge($block->content ?: [], $this->prepareDynamicContent($block));
+
+                if ($time = $block->getOptions('cache')) {
+                    Cache::put($modelClass::getCacheName($block->{$initKey}), $block, $time * 60);
                 }
+
+                $blocks[$block->{$initKey}] = $block;
+            }
+        }
+
+        $res = [];
+        foreach ($keys as $key) {
+            if ($block = $blocks[$key] ?? null) {
+                $resolvedMapKey
+                    ? $res[$block->{$resolvedMapKey}] = BlockResource::make($block)
+                    : $res[] = BlockResource::make($block);
             }
         }
 
