@@ -38,6 +38,11 @@ class Block extends Model
             Cache::forget(self::getCacheName($model->slug));
             Cache::forget(self::getCacheName($model->id));
         });
+
+        static::deleted(function ($model) {
+            Cache::forget(self::getCacheName($model->slug));
+            Cache::forget(self::getCacheName($model->id));
+        });
     }
 
     public static function getCacheName(string|int $key): string
