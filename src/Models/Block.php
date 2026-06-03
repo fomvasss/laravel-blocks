@@ -47,7 +47,7 @@ class Block extends Model
 
     public static function getCacheName(string|int $key): string
     {
-        return md5("blocks-{$key}");
+        return "blocks.{$key}";
     }
 
     /**

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.3] — 2026-06-03
+
+### Changed
+
+- `Block::getCacheName()` now returns `"blocks.{$key}"` instead of `md5("blocks-{$key}")` — removes unnecessary hashing overhead.
+  **Note:** existing cache entries (md5 keys) become orphans — run `php artisan cache:clear` after deploy.
+
 ## [2.6.2] — 2026-06-03
 
 ### Fixed
