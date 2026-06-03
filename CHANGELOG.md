@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.6.4] — 2026-06-03
+
+### Fixed
+
+- `prepareStaticContent()`: field handler instances and config are now resolved once before recursion instead of on every string field at every recursion level.
+
 ## [2.6.3] — 2026-06-03
 
 ### Changed

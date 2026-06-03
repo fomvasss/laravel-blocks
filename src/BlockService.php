@@ -242,27 +242,30 @@ class BlockService
         return null;
     }
 
-    /**
-     * Підготовка статичних даних блоку.
-     *
-     * @param array $content
-     * @return array
-     */
-    protected function prepareStaticContent(Model $block, array $content = [])
+    protected function prepareStaticContent(Model $block, array $content = []): array
+    {
+        $handlers = array_filter(
+            array_map(
+                fn(string $class) => class_exists($class) ? app()->make($class) : null,
+                config('blocks.fieldhandlers') ?? []
+            )
+        );
+
+        return $this->applyFieldHandlers($block, $content, $handlers);
+    }
+
+    private function applyFieldHandlers(Model $block, array $content, array $handlers): array
     {
         $res = $content;
 
         foreach ($content as $key => $val) {
             if (is_array($val)) {
-                $res[$key] = $this->prepareStaticContent($block, $val);
+                $res[$key] = $this->applyFieldHandlers($block, $val, $handlers);
             } elseif (is_string($val)) {
-                $resVal = $val;
-                foreach (config('blocks.fieldhandlers') as $handler) {
-                    if (class_exists($handler)) {
-                        $resVal = app()->make($handler)->handle($block, $resVal);
-                    }
+                foreach ($handlers as $handler) {
+                    $val = $handler->handle($block, $val);
                 }
-                $res[$key] = $resVal;
+                $res[$key] = $val;
             }
         }
 
