@@ -35,13 +35,13 @@ class Block extends Model
         });
 
         static::saved(function ($model) {
-            Cache::forget(self::getCacheName($model->slug));
-            Cache::forget(self::getCacheName($model->id));
+            Cache::forget(static::getCacheName($model->slug));
+            Cache::forget(static::getCacheName($model->id));
         });
 
         static::deleted(function ($model) {
-            Cache::forget(self::getCacheName($model->slug));
-            Cache::forget(self::getCacheName($model->id));
+            Cache::forget(static::getCacheName($model->slug));
+            Cache::forget(static::getCacheName($model->id));
         });
     }
 
